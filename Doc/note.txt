@@ -1,0 +1,16 @@
+年齢
+性別
+ジョッキーとの相性
+
+20年分のデータ
+
+* そのレースの結果のみでモデル作成(ランダムフォレスト)
+
+
+
+http://db.netkeiba.com/race/199701010611/
+http://db.netkeiba.com/race/200201010411/
+
+http://db.netkeiba.com/race/200701010809/
+http://db.netkeiba.com/race/201302040211/
+http://db.netkeiba.com/race/201501020211/
