@@ -1,3 +1,4 @@
+import numpy as np
 class SMOTE(object):
     def __init__(self, N):
         self.N = N
@@ -7,7 +8,6 @@ class SMOTE(object):
         mino_idx = np.where(cv==1)[0]
         mino_smp = smp[mino_idx,:]
 
-        # kNNの実施
         mino_nn = []
 
         for idx in mino_idx:
@@ -17,7 +17,7 @@ class SMOTE(object):
                 if idx != i:
                     dist = self.dist(smp[idx,:], smp[i,:])
 
-                    if len(near_dist)<nnk: # 想定ご近所さん数まで到達していなければ問答無用でlistに追加
+                    if len(near_dist)<nnk:
                         tmp = near_dist.tolist()
                         tmp.append(dist)
                         near_dist = np.array(tmp)
