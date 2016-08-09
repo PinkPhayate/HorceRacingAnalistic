@@ -28,8 +28,8 @@ def create_df(race_id):
     df = df.drop("gl", axis=1)
 
     # classify
-    udf = df[df['rank'] < 6] 
-    udf['target'] = 1
-    ddf = df[df['rank'] > 5]
-    ddf['target'] = 0
-    df = pd.concat((udf, ddf), axis=0)
+    pos_df = df[df['rank'] < 6]
+    pos_df['target'] = 1
+    neg_df = df[df['rank'] > 5]
+    neg_df['target'] = 0
+    return pos_df, neg_df
