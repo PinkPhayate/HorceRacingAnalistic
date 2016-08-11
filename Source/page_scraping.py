@@ -30,7 +30,6 @@ def scraping(url, output_file):
     f.close()
 
 if __name__ == '__main__':
-
     df = pd.read_csv('./../Data/race_info.csv', header=None)
     years = df[9]
     for year in years:

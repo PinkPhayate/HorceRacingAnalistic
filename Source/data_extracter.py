@@ -11,7 +11,7 @@ def create_df(race_id):
     df = df[['rank', 'frame', 'num', 'sex', 'age', 'odds', 'fav', 'wght', 'gl', 'qntty']]
 
     dum = pd.get_dummies(df["sex"])
-    size = dum/len(dum)
+    size = dum.size/len(dum)
     if size == 2:
         dum.columns = ['f','m']
         df = pd.concat((df, dum), axis=1)
@@ -32,4 +32,7 @@ def create_df(race_id):
     pos_df['target'] = 1
     neg_df = df[df['rank'] > 5]
     neg_df['target'] = 0
-    return pos_df, neg_df
+    df = pd.concat((pos_df, neg_df), axis=0)
+    df.columns = ['frame', 'num', 'age', 'odds', 'fav', 'wght', 'qntty', 'f', 'm', 'z', 'p', 'm', 'target']
+    # return pos_df, neg_df
+    return df
