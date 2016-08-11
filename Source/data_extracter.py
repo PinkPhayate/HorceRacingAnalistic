@@ -33,6 +33,49 @@ def create_df(race_id):
     neg_df = df[df['rank'] > 5]
     neg_df['target'] = 0
     df = pd.concat((pos_df, neg_df), axis=0)
-    df.columns = ['frame', 'num', 'age', 'odds', 'fav', 'wght', 'qntty', 'f', 'm', 'z', 'p', 'm', 'target']
+    print df
+    df.columns = ['rank', 'frame', 'num', 'age', 'odds', 'fav', 'wght', 'qntty', 'f', 'm', 'z', 'p', 'm', 'target']
+    # return pos_df, neg_df
+    return df
+
+def create_merged_df(train_years):
+# def create_merged_df(eval_year, train_years):
+    df = pd.DataFrame([])
+    for race_id in train_years:
+        # print race_id
+        d = pd.read_csv('./../Data/' + str(race_id) + '.csv', header=None)
+        d = d.ix[:,:14]
+        df = pd.concat([df, d], axis=0)
+
+    df.columns = ['rank', 'frame', 'num', 'name', 'sexAge', 'hande', 'jockey', 'time', 'diff', 'time_index', 'path', 'last', 'odds', 'fav', 'w']
+    df[['sex', 'age']] = df['sexAge'].str.extract('(.)([1-9]+)')
+    df[['wght','gl', 'qntty']] = df['w'].str.extract('([\d]{3})\((.?)([\d]+)\)')
+    df = df[['rank', 'frame', 'num', 'sex', 'age', 'odds', 'fav', 'wght', 'gl', 'qntty']]
+
+    dum = pd.get_dummies(df["sex"])
+    size = dum.size/len(dum)
+    if size == 2:
+        dum.columns = ['f','m']
+        df = pd.concat([df, dum], axis=1)
+        df = df.drop("sex", axis=1)
+    elif size == 3:
+        dum.columns = ['f','m','g']
+        df = pd.concat([df, dum], axis=1)
+        df = df.drop("sex", axis=1)
+    else:
+        df = pd.concat([df, dum], axis=1)
+
+    dum = pd.get_dummies(df["gl"])
+    df = pd.concat([df, dum], axis=1)
+    df = df.drop("gl", axis=1)
+
+    # classify
+    pos_df = df[df['rank'] < 6]
+    pos_df['target'] = 1
+    neg_df = df[df['rank'] > 5]
+    neg_df['target'] = 0
+    df = pd.concat([pos_df, neg_df], axis=0)
+    print df
+    df.columns = ['rank', 'frame', 'num', 'age', 'odds', 'fav', 'wght', 'qntty', 'f', 'm', 'g', 'z', 'p', 'm', 'target']
     # return pos_df, neg_df
     return df
