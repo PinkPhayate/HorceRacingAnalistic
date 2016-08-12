@@ -1,19 +1,13 @@
 import data_extracter as de
 import pandas as pd
+import csv
 from sklearn.linear_model import SGDClassifier
 ALL_PARAMS = ['frame', 'num','age','odds','fav','wght','qntty','f','m','z','p','m']
 
-def get_train_years(eval_year):
-    df = pd.read_csv('./../Data/race_info.csv', header=None)
-    years = df[9]
-    train_years = []
-    for year in years:
-        if year != eval_year:
-            train_years.append(year)
-    return train_years
-
 def predict_via_sgd(years):
     dfs = de.create_merged_df(years)
+    f = open('./../Result/sgd_default.csv', 'ab')
+    csvWriter = csv.writer(f)
 
     for race_id in years:
         print race_id
@@ -31,9 +25,11 @@ def predict_via_sgd(years):
 
         predicts = clf.predict(eX)
         print predicts
+        list = [race_id, ]
+        list.append(predicts.tolist())
+        csvWriter.writerow(list)
+    f.close
 
-    # dict = evl.circulate_fvalue(next_df, nml_prm, predicts)
-    # print dict
 
 if __name__ == '__main__':
     '''
