@@ -12,23 +12,25 @@ def get_train_years(eval_year):
             train_years.append(year)
     return train_years
 
-def predict_via_sgd(eval_year, train_years):
-    # dfs = pd.DataFrame([])
-    # for year in train_years:
-    #     df = de.create_df(str(year))
-    #     dfs = pd.concat([dfs, df])
-    dfs = de.create_merged_df(train_years)
-    # dfs = de.create_merged_df(eval_year, train_years)
-    dfs = dfs.dropna(axis=0)
-    X = dfs[ALL_PARAMS]
-    y = dfs[['target']]
+def predict_via_sgd(years):
+    dfs = de.create_merged_df(years)
 
-    clf = SGDClassifier(loss="log", penalty="l2")
-    clf.fit(X, y)
+    for race_id in years:
+        print race_id
+        evalt_df = dfs[dfs['race_id'] == race_id]
+        train_df = dfs[dfs['race_id'] != race_id]
 
-    df = de.create_df(str(eval_year))
-    predicts = clf.predict(df)
-    print predicts
+        X = train_df[ALL_PARAMS]
+        y = train_df[['target']]
+
+        clf = SGDClassifier(loss="log", penalty="l2")
+        clf.fit(X, y)
+
+        eX = evalt_df[ALL_PARAMS]
+        # ey = evalt_df[['target']]
+
+        predicts = clf.predict(eX)
+        print predicts
 
     # dict = evl.circulate_fvalue(next_df, nml_prm, predicts)
     # print dict
@@ -41,9 +43,4 @@ if __name__ == '__main__':
     '''
     df = pd.read_csv('./../Data/race_info.csv', header=None)
     years = df[9]
-    print 'get data'
-    for eval_year in years:
-        print eval_year
-        train_years = get_train_years(eval_year)
-        predict_via_sgd(eval_year, train_years)
-        break
+    predict_via_sgd( years )
