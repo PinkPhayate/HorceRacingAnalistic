@@ -29,6 +29,24 @@ def scraping(url, output_file):
         csvWriter.writerow(list)
     f.close()
 
+def scrape_res(url, output_file):
+    # read page source code
+    f = open('./../Data/res_ '+ output_file, 'w')
+    csvWriter = csv.writer(f)
+    soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
+
+    table = soup.find(class_='pay_block')
+    for tr in table.findAll('tr',''):
+        list = []
+        th = tr.find('th').string
+        list.append(th.encode('utf-8'))
+        for td in tr.findAll('td',''):
+            if td.string == None:
+                td = td.get_text(separator=' ')
+            list.append(td.string.encode('utf-8'))
+            csvWriter.writerow(list)
+    f.close
+
 if __name__ == '__main__':
     df = pd.read_csv('./../Data/race_info.csv', header=None)
     years = df[9]
@@ -37,4 +55,5 @@ if __name__ == '__main__':
         year = str(year)
         url = 'http://db.netkeiba.com/race/' + year + '/'
         output_file = year + '.csv'
-        html_doc = scraping(url, output_file)
+        # html_doc = scraping(url, output_file)
+        res_doc = scrape_res(url, output_file)
