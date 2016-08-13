@@ -34,7 +34,7 @@ if __name__ == '__main__':
     years = df[9]
     # predict_via_sgd( years )
     dfs = de.create_merged_df(years)
-    f = open('./../Result/sgd_default.csv', 'ab')
+    f = open('./../Result/sgd_default_prob.csv', 'ab')
     csvWriter = csv.writer(f)
 
     for race_id in years:
@@ -47,11 +47,15 @@ if __name__ == '__main__':
         # circulate average
         list = map(lambda x: float(x) / ITERATION, sum_list)
 
-        # call for pay list
+        # save probability
         pay_list = [race_id,]
-        for index in range(1,len(list)):
-            if list[index] >= THRESHOLD:
-                pay_list.append(index)
-        print pay_list
+        pay_list.extend(list)
+
+        ## make dicision to pay or not
+        # pay_list = [race_id,]
+        # for index in range(1,len(list)):
+        #         if list[index] >= THRESHOLD:
+        #         pay_list.append(index)
+        # print pay_list
         csvWriter.writerow(pay_list)
     f.close

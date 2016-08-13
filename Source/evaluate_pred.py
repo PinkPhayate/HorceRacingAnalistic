@@ -1,7 +1,7 @@
 # coding: UTF-8
 import pandas as pd
 import csv,re,json
-if __name__ == '__main__':
+def normalize_race_odds():
     df = pd.read_csv('./../Data/race_info.csv', header=None)
     years = df[9]
     odds_dict = {}
@@ -24,3 +24,11 @@ if __name__ == '__main__':
         odds_dict[y] = dict
     f = open("./../Data/odds_dict.json", "w")
     json.dump(odds_dict, f, ensure_ascii=False)
+    f.close()
+
+
+
+
+ if __name__ == '__main__':
+     normalize_race_odds()
+

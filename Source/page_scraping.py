@@ -4,6 +4,8 @@ import csv
 import urllib2
 from bs4 import BeautifulSoup
 import lxml
+import evaluate_pred as ep
+
 def get_race_list():
     df = pd.read_csv('./../Data/race_info.csv', header=None)
     years = df[9]
@@ -63,3 +65,5 @@ if __name__ == '__main__':
         html_doc = scraping(url, output_file)
         # scrape rate data
         res_doc = scrape_res(url, output_file)
+        # normalize rate data
+        ep.normalize_race_odds()
