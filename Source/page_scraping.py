@@ -31,7 +31,7 @@ def scraping(url, output_file):
 
 def scrape_res(url, output_file):
     # read page source code
-    f = open('./../Data/res_ '+ output_file, 'w')
+    f = open('./../Data/res_'+ output_file, 'w')
     csvWriter = csv.writer(f)
     soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
 
@@ -43,9 +43,13 @@ def scrape_res(url, output_file):
         for td in tr.findAll('td',''):
             if td.string == None:
                 td = td.get_text(separator=' ')
-            list.append(td.string.encode('utf-8'))
-            csvWriter.writerow(list)
-    f.close
+                # print td.encode('utf-8')
+                list.append(td.encode('utf-8'))
+            else:
+                # print(td.string.encode('utf-8'))
+                list.append(td.string.encode('utf-8'))
+        csvWriter.writerow(list)
+    f.close()
 
 if __name__ == '__main__':
     df = pd.read_csv('./../Data/race_info.csv', header=None)
@@ -55,5 +59,7 @@ if __name__ == '__main__':
         year = str(year)
         url = 'http://db.netkeiba.com/race/' + year + '/'
         output_file = year + '.csv'
-        # html_doc = scraping(url, output_file)
+        # scrape race data
+        html_doc = scraping(url, output_file)
+        # scrape rate data
         res_doc = scrape_res(url, output_file)
