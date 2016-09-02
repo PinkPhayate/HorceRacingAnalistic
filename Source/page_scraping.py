@@ -54,16 +54,22 @@ def scrape_res(url, output_file):
     f.close()
 
 if __name__ == '__main__':
+    '''
+    This program works for getting information about each registered horses in each year.
+    crawle each page about race.
+    '''
+
     df = pd.read_csv('./../Data/race_info.csv', header=None)
     years = df[9]
     for year in years:
-        print year
         year = str(year)
         url = 'http://db.netkeiba.com/race/' + year + '/'
         output_file = year + '.csv'
-        # scrape race data
+        # scrape RACE data
         html_doc = scraping(url, output_file)
-        # scrape rate data
+
+        # scrape RATE data
         res_doc = scrape_res(url, output_file)
+
         # normalize rate data
         ep.normalize_race_odds()

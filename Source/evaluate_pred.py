@@ -26,9 +26,5 @@ def normalize_race_odds():
     json.dump(odds_dict, f, ensure_ascii=False)
     f.close()
 
-
-
-
- if __name__ == '__main__':
+if __name__ == '__main__':
      normalize_race_odds()
-
