@@ -1,18 +1,8 @@
 # coding: UTF-8
-import pandas as pd
-import csv
-import urllib2
 from bs4 import BeautifulSoup
-import lxml
-import evaluate_pred as ep
+import csv, re, json, urllib2, lxml
 
-def get_race_list():
-    df = pd.read_csv('./../Data/race_info.csv', header=None)
-    years = df[9]
-    return years.tolist()
-
-
-def scraping(url, output_file):
+def scrape_race_info(url, output_file):
     # read page source code
     f = open('./../Data/' + output_file, 'w')
     csvWriter = csv.writer(f)
@@ -53,23 +43,69 @@ def scrape_res(url, output_file):
         csvWriter.writerow(list)
     f.close()
 
+def scrape_rid():
+    '''
+    1. read page source
+    2. scrape rid (race id)
+    return -> race_id list
+    '''
+    source = './../cent'
+    soup = BeautifulSoup(open(source), "lxml")
+    table = soup.find("table", attrs = {"class": "nk_tb_common race_table_01"})
+    list = []
+    for tr in table.findAll('tr'):
+        for td in tr.findAll("td", attrs = {"class": "txt_l"}):
+            # links = td.find_all('a')
+            for link in td.findAll('a'):
+                # if 'href' in link.attrs:
+                url = link.attrs['href']
+                if "race" in link.attrs['href']:
+                    tmp = url.split('/')
+                    list.append(tmp[4])
+    return list
+
+
+def scrape_race_odds(years):
+    odds_dict = {}
+    for year in years:
+        y = str(year)
+        output_file = y + '.csv'
+        f = open('./../Data/res_'+ output_file, 'rb')
+        dataReader = csv.reader(f)
+        dict = {}
+        for row in dataReader:
+            odds = row[2]
+            if ' ' in odds:
+                odds = odds.split('　')
+            num = row[1].replace('→','-')
+            num = num.replace(' - ','-')
+            if ' ' in num:
+                num = num.split('　')
+            dict[row[0]] = {'num':num,'odds': row[2]}
+
+        odds_dict[y] = dict
+    f = open("./../Data/odds_dict.json", "w")
+    json.dump(odds_dict, f, ensure_ascii=False)
+    f.close()
+
+
 if __name__ == '__main__':
     '''
     This program works for getting information about each registered horses in each year.
     crawle each page about race.
     '''
+    #  get race id
+    rids = scrape_rid()
 
-    df = pd.read_csv('./../Data/race_info.csv', header=None)
-    years = df[9]
-    for year in years:
-        year = str(year)
+    for year in rids:
+        # year = str(year)
         url = 'http://db.netkeiba.com/race/' + year + '/'
         output_file = year + '.csv'
         # scrape RACE data
-        html_doc = scraping(url, output_file)
+        html_doc = scrape_race_info(url, output_file)
 
         # scrape RATE data
         res_doc = scrape_res(url, output_file)
 
-        # normalize rate data
-        ep.normalize_race_odds()
+    # normalize rate data
+    scrape_race_odds(rids)
